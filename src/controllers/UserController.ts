@@ -20,7 +20,7 @@ static listAll = async (req: Request, res: Response) => {
 
 static getOneById = async (req: Request, res: Response) => {
   //Get the ID from the url
-  const id: number = req.params.id;
+  const id = req.params.id;
 
   //Get the user from database
   const userRepository = getRepository(User);
