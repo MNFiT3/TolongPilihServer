@@ -7,5 +7,6 @@ const router = Router();
 router.post("/group/create", [checkJwt], TolongPilih.createGroup)
 router.post("/group/join", [checkJwt], TolongPilih.joinGroup)
 router.post("/group/leave", [checkJwt], TolongPilih.leaveGroup)
+router.post("/group/invite", [checkJwt], TolongPilih.inviteGroup)
 
 export default router;

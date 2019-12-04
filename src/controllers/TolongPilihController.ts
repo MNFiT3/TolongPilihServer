@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
-import * as jwt from "jsonwebtoken";
 import { getRepository } from "typeorm";
 import { validate } from "class-validator";
 
-import config from "../config/config";
 import { UserGroup } from "../entity/UserGroup";
 import { Group } from "../entity/Group";
 import { User } from "../entity/User";
@@ -187,7 +185,65 @@ export default class TolongPilihController {
     }
 
     static inviteGroup = async (req: Request, res: Response) => {
+        const { email, groupId } = req.body
+        const userId = res.locals.jwtPayload.userId
 
+        let invitedUser: User
+        try {
+            invitedUser = await getRepository(User).findOneOrFail({ email })
+        } catch (error) {
+            res.status(409).send("Email attribute missing")
+            return
+        }
+        
+        //TODO: check if user add himself
+        console.log(invitedUser.id)
+        console.log(userId)
+
+        if(invitedUser.id == userId){
+            res.send(409).send("But why?")
+            return
+        }
+
+        let invitedToGroup: Group
+        try {
+            invitedToGroup = await getRepository(Group).findOneOrFail({ id: groupId })
+        } catch (error) {
+            res.status(409).send("groupId attribute missing")
+            return
+        }
+
+
+        
+        try {
+            await getRepository(UserGroup).findOneOrFail({ user: invitedUser, group: invitedToGroup })
+        } catch (error) {
+            res.status(409).send()
+            return
+        }
+
+
+        return
+
+        let newMember = new UserGroup()
+        newMember.group = invitedToGroup
+        newMember.user = invitedUser
+        newMember.role = 'Member'
+        
+        const error = await validate(UserGroup)
+        if(error.length > 0){
+            res.status(400).send(error)
+            return
+        }
+
+        try {
+            await getRepository(UserGroup).save(newMember)
+        } catch (error) {
+            res.status(409).send("Error adding user")
+            return
+        }
+
+        res.status(204).send()
     }
 
     static addItems = async (req: Request, res: Response) => {
