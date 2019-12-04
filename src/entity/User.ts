@@ -4,36 +4,46 @@ import {
   Column,
   Unique,
   CreateDateColumn,
-  UpdateDateColumn
+  OneToMany
 } from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
+import { UserGroup } from "./UserGroup";
 
 @Entity()
-@Unique(["username"])
+@Unique(["email"])
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column()
-  @Length(4, 20)
+  @Column({length: 45})
+  @Length(4, 45)
   username: string;
 
-  @Column()
-  @Length(4, 100)
-  password: string;
+  @Column({length: 45})
+  @Length(4, 45)
+  email: string;
 
-  @Column()
-  @IsNotEmpty()
-  role: string;
+  @Column({length: 45})
+  @Length(8, 45)
+  password: string;
 
   @Column()
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Column({length: 32})
+  @Length(1, 32)
+  role: string;
+
+  @Column({
+    type: 'json',
+    nullable: true
+  })
+  json: any;
+
+  @OneToMany(() => UserGroup, userGroup => userGroup.user)
+  userGroup: UserGroup[];
 
   hashPassword() {
     this.password = bcrypt.hashSync(this.password, 8);
