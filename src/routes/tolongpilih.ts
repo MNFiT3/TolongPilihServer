@@ -9,4 +9,6 @@ router.post("/group/join", [checkJwt], TolongPilih.joinGroup)
 router.post("/group/leave", [checkJwt], TolongPilih.leaveGroup)
 router.post("/group/invite", [checkJwt], TolongPilih.inviteGroup)
 
+router.post("/group/item/add", [checkJwt], TolongPilih.addItems)
+
 export default router;

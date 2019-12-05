@@ -8,8 +8,8 @@ import { User } from "../entity/User";
 
 export default class TolongPilihController {
 
-    static checkUserAndGroup = async (groupId: any, userId: any, res: Response, callback: Function) => {
-
+    static checkUserAndGroup = async (groupId: any, res: Response, callback: Function) => {
+        const userId = res.locals.jwtPayload.userId
         let user: User
         try {
             user = await getRepository(User).findOneOrFail(userId)
@@ -91,7 +91,7 @@ export default class TolongPilihController {
         const userId = res.locals.jwtPayload.userId
 
 
-        TolongPilihController.checkUserAndGroup(groupId, userId, res, async (err, user, group) => {
+        TolongPilihController.checkUserAndGroup(groupId, res, async (err, user, group) => {
             if (!err) {
                 let userGroup: UserGroup
                 try {
@@ -130,9 +130,8 @@ export default class TolongPilihController {
 
     static leaveGroup = async (req: Request, res: Response) => {
         const { groupId } = req.body
-        const userId = res.locals.jwtPayload.userId
 
-        TolongPilihController.checkUserAndGroup(groupId, userId, res, async (err, user, group) => {
+        TolongPilihController.checkUserAndGroup(groupId, res, async (err, user, group) => {
             let userGroup: UserGroup
             try {
                 userGroup = await getRepository(UserGroup).findOneOrFail({ user, group })
@@ -238,7 +237,49 @@ export default class TolongPilihController {
     }
 
     static addItems = async (req: Request, res: Response) => {
+        const { groupId, item } = req.body
 
+        if(!item){
+            res.status(409).send('item attribute missing')
+            return
+        }
+
+        TolongPilihController.checkUserAndGroup(groupId, res, async (err, user: User, group: Group) => {
+
+            let userGroup: UserGroup
+            try {
+                userGroup = await getRepository(UserGroup).findOneOrFail({ where: { user: user, group: group } })
+            } catch (error) {
+                res.status(409).send()
+                return
+            }
+
+            if(userGroup.role != 'Admin'){
+                res.status(409).send('Only admin can add item')
+                return
+            }
+
+            if(group.list == null || group.list == ''){
+                group.list = []
+            }
+
+            let isDuplicate = group.list.indexOf(item)
+            if(isDuplicate != -1){
+                res.status(409).send('Item with the same name already in the item list')
+                return
+            }
+
+            group.list.push(item)
+
+            try {
+                await getRepository(Group).save(group)
+            } catch (error) {
+                res.status(409).send()
+                return
+            }
+
+            res.status(204).send()
+        })
     }
 
     static removeItems = async (req: Request, res: Response) => {
