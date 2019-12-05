@@ -190,18 +190,14 @@ export default class TolongPilihController {
 
         let invitedUser: User
         try {
-            invitedUser = await getRepository(User).findOneOrFail({ email })
+            invitedUser = await getRepository(User).findOneOrFail({ where: { email: email } })
         } catch (error) {
             res.status(409).send("Email attribute missing")
             return
         }
         
-        //TODO: check if user add himself
-        console.log(invitedUser.id)
-        console.log(userId)
-
         if(invitedUser.id == userId){
-            res.send(409).send("But why?")
+            res.status(409).send("Can't invite yourself")
             return
         }
 
@@ -213,17 +209,12 @@ export default class TolongPilihController {
             return
         }
 
+        const isInGroup = await getRepository(UserGroup).count({ user: invitedUser, group: invitedToGroup })
 
-        
-        try {
-            await getRepository(UserGroup).findOneOrFail({ user: invitedUser, group: invitedToGroup })
-        } catch (error) {
-            res.status(409).send()
+        if(isInGroup > 0){
+            res.status(409).send('Already in the group')
             return
         }
-
-
-        return
 
         let newMember = new UserGroup()
         newMember.group = invitedToGroup
