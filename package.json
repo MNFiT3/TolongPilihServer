@@ -24,7 +24,8 @@
     "reflect-metadata": "^0.1.13",
     "sqlite3": "^4.1.0",
     "ts-node-dev": "^1.0.0-pre.32",
-    "typeorm": "0.2.20"
+    "typeorm": "0.2.20",
+    "uuidv4": "^6.0.0"
   },
   "scripts": {
     "tsc": "tsc",

@@ -10,5 +10,8 @@ router.post("/group/leave", [checkJwt], TolongPilih.leaveGroup)
 router.post("/group/invite", [checkJwt], TolongPilih.inviteGroup)
 
 router.post("/group/item/add", [checkJwt], TolongPilih.addItems)
+router.post("/group/item/remove", [checkJwt], TolongPilih.removeItems)
+
+router.post("/", [checkJwt], TolongPilih.tolongPilih)
 
 export default router;

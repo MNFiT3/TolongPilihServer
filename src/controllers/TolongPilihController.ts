@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { validate } from "class-validator";
+import { uuid } from 'uuidv4'; 
 
 import { UserGroup } from "../entity/UserGroup";
 import { Group } from "../entity/Group";
@@ -283,11 +284,88 @@ export default class TolongPilihController {
     }
 
     static removeItems = async (req: Request, res: Response) => {
+        const { groupId, item } = req.body
 
+        if(!item){
+            res.status(409).send('item attribute missing')
+            return
+        }
+
+        TolongPilihController.checkUserAndGroup(groupId, res, async (err, user: User, group: Group) => {
+
+            let userGroup: UserGroup
+            try {
+                userGroup = await getRepository(UserGroup).findOneOrFail({ where: { user: user, group: group } })
+            } catch (error) {
+                res.status(409).send()
+                return
+            }
+
+            if(userGroup.role != 'Admin'){
+                res.status(409).send('Only admin can remove item')
+                return
+            }
+
+            if(group.list == null || group.list == ''){
+                res.status(409).send('There is no item to delete')
+                return
+            }
+
+            if(group.list.indexOf(item) == -1){
+                res.status(404).send('The item does not exist in the list')
+                return
+            }
+
+            group.list.splice( group.list.indexOf(item), 1 );
+
+            try {
+                await getRepository(Group).save(group)
+            } catch (error) {
+                res.status(409).send()
+                return
+            }
+
+            res.status(204).send()
+        })
     }
 
     static tolongPilih = async (req: Request, res: Response) => {
+        const { groupId } = req.body
 
+        TolongPilihController.checkUserAndGroup(groupId, res, async (err, user: User, group: Group) => {
+
+            const itemList = group.list
+            const min = Math.ceil(0);
+            const max = Math.floor(itemList.length);
+            const index = Math.floor(Math.random() * (max - min)) + min;
+
+            if(group.history == null || group.history == ''){
+                group.history = []
+            }
+
+            const date = new Date()
+            const dT_UTC = date.getUTCFullYear() + '-' + date.getUTCMonth() + '-' + date.getUTCDate() + ' ' + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds()
+            
+            delete user.password
+            delete user.createdAt
+            delete user.json
+            
+            const tolongPilih = {
+                id: uuid(),
+                dateTime: dT_UTC,
+                initiator: user,
+                result: itemList[index]
+            }
+            group.history.push(tolongPilih)
+
+            try {
+                await getRepository(Group).save(group)
+            } catch (error) {
+                res.status(409).send()
+                return
+            }
+
+            res.json(tolongPilih)
+        })
     }
-
 }
