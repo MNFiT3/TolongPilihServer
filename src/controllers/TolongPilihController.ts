@@ -33,6 +33,12 @@ export default class TolongPilihController {
         return
     }
 
+    static test = async (req: Request, res: Response) => {
+        console.log(JSON.parse(req.body.PostData))
+        //res.json(req.body)
+        res.send('Success')
+    }
+
     static createGroup = async (req: Request, res: Response) => {
         const { name } = req.body
         const userId = res.locals.jwtPayload.userId

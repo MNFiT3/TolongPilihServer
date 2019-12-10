@@ -17,6 +17,7 @@ createConnection()
     // Call midlewares
     app.use(cors());
     app.use(helmet());
+    app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
 
     //Set all routes from routes folder
