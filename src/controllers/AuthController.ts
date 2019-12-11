@@ -9,9 +9,12 @@ import config from "../config/config";
 class AuthController {
   static login = async (req: Request, res: Response) => {
     //Check if username and password are set
-    let { email, password } = req.body;
+    let { email, password } = JSON.parse(req.body.PostData)
+    //let { email, password } = req.body
+
     if (!(email && password)) {
-      res.status(400).send();
+      res.status(400).send('Email and password cannot be empty');
+      return
     }
 
     //Get user from database
@@ -20,12 +23,14 @@ class AuthController {
     try {
       user = await userRepository.findOneOrFail({ where: { email } });
     } catch (error) {
-      res.status(401).send();
+      res.status(401).send('Email not exists');
+      return
     }
 
     //Check if encrypted password match
-    if (!user.checkIfUnencryptedPasswordIsValid(password)) {
-      res.status(401).send();
+    const result = await user.checkIfUnencryptedPasswordIsValid(password);
+    if (!result) {
+      res.status(401).send('Wong Password');
       return;
     }
 
@@ -61,7 +66,7 @@ class AuthController {
 
     //Check if old password matchs
     if (!user.checkIfUnencryptedPasswordIsValid(oldPassword)) {
-      res.status(401).send();
+      res.status(401).send('Worng password');
       return;
     }
 
