@@ -9,8 +9,7 @@ import config from "../config/config";
 class AuthController {
   static login = async (req: Request, res: Response) => {
     //Check if username and password are set
-    let { email, password } = JSON.parse(req.body.PostData)
-    //let { email, password } = req.body
+    let { email, password } = req.body
 
     if (!(email && password)) {
       res.status(400).send('Email and password cannot be empty');

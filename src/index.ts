@@ -6,6 +6,7 @@ import * as helmet from "helmet";
 import * as cors from "cors";
 import routes from "./routes";
 import * as path from "path";
+import { mobile } from "./middlewares/mobile";
 
 const PORT = 3001 || process.env.PORT
 const webURL = "web";
@@ -35,6 +36,7 @@ createConnection()
 
     //Set all routes from routes folder
     app.use("/api", routes);
+    app.use("/api/mobile", mobile, routes);
 
     app.listen(PORT, () => {
       console.log("Server started on port " + PORT);
