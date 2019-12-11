@@ -36,16 +36,17 @@ class UserController {
 
   static newUser = async (req: Request, res: Response) => {
     //Get parameters from the body
-    let { username, password, role } = req.body;
+    let { username, password, email } = req.body;
     let user = new User();
     user.username = username;
     user.password = password;
-    user.role = role;
+    user.email = email
+    user.role = 'User';
 
     //Validade if the parameters are ok
     const errors = await validate(user);
     if (errors.length > 0) {
-      res.status(400).send(errors);
+      res.status(400).send(errors.toString());
       return;
     }
 
@@ -57,7 +58,7 @@ class UserController {
     try {
       await userRepository.save(user);
     } catch (e) {
-      res.status(409).send("username already in use");
+      res.status(409).send("Email already in use");
       return;
     }
 

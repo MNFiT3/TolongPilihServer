@@ -24,8 +24,8 @@ export class User {
   @Length(4, 45)
   email: string;
 
-  @Column({length: 45})
-  @Length(8, 45)
+  @Column({length: 255})
+  @Length(8, 255)
   password: string;
 
   @Column()
@@ -50,6 +50,6 @@ export class User {
   }
 
   checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
-    return bcrypt.compareSync(unencryptedPassword, this.password);
+    return bcrypt.compare(unencryptedPassword, this.password)
   }
 }

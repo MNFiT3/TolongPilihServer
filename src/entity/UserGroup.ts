@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToOne } from 'typeorm'
-import { } from 'class-validator'
+import { Length } from 'class-validator'
 import { User } from './User';
 import { Group } from './Group';
 
@@ -7,6 +7,10 @@ import { Group } from './Group';
 export class UserGroup {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column({length: 32})
+    @Length(1, 32)
+    role: string;
 
     @Column()
     @CreateDateColumn()
