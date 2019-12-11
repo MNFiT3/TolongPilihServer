@@ -8,7 +8,7 @@ import routes from "./routes";
 import * as path from "path";
 import { mobile } from "./middlewares/mobile";
 
-const PORT = 3001 || process.env.PORT
+const PORT =  process.env.PORT || 3001
 const webURL = "web";
 
 //Connects to the Database -> then starts the express
