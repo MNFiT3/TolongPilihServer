@@ -336,14 +336,14 @@ export default class TolongPilihController {
     }
 
     static tolongPilih = async (req: Request, res: Response) => {
-        const { groupId } = req.body
+        const { groupId, item } = req.body
 
         TolongPilihController.checkUserAndGroup(groupId, res, async (err, user: User, group: Group) => {
 
-            const itemList = group.list
-            const min = Math.ceil(0);
-            const max = Math.floor(itemList.length);
-            const index = Math.floor(Math.random() * (max - min)) + min;
+            // const itemList = group.list
+            // const min = Math.ceil(0);
+            // const max = Math.floor(itemList.length);
+            // const index = Math.floor(Math.random() * (max - min)) + min;
 
             if(group.history == null || group.history == ''){
                 group.history = []
@@ -360,7 +360,7 @@ export default class TolongPilihController {
                 id: uuid(),
                 dateTime: dT_UTC,
                 initiator: user,
-                result: itemList[index]
+                result: item
             }
             group.history.push(tolongPilih)
 
@@ -394,5 +394,19 @@ export default class TolongPilihController {
         })
         
         res.json(groupList)
+    }
+
+    static itemList = async (req: Request, res: Response) => {
+        const { groupId } = req.body
+        
+        var group:Group
+        try {
+            group = await getRepository(Group).findOneOrFail({ where: { id: groupId}})
+        } catch (error) {
+            res.status(409).send("Group not exists")
+            return
+        }
+
+        res.json(group)
     }
 }
