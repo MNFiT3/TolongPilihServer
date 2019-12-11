@@ -14,6 +14,7 @@ router.post("/group/list", [checkJwt], TolongPilih.groupList)
 
 router.post("/group/item/add", [checkJwt], TolongPilih.addItems)
 router.post("/group/item/remove", [checkJwt], TolongPilih.removeItems)
+router.post("/group/item/list", [checkJwt], TolongPilih.itemList)
 
 router.post("/", [checkJwt], TolongPilih.tolongPilih)
 

@@ -10,6 +10,7 @@ import { mobile } from "./middlewares/mobile";
 
 const PORT =  process.env.PORT || 3001
 const webURL = "web";
+const whitelist = ['null', null, undefined]
 
 //Connects to the Database -> then starts the express
 createConnection()
@@ -17,8 +18,18 @@ createConnection()
     // Create a new express application instance
     const app = express();
 
+    var corsOptions = {
+      origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+          callback(null, true)
+        } else {
+          callback(new Error('Not allowed by CORS'))
+        }
+      }
+    }
+    app.use(cors(corsOptions));
+
     // Call midlewares
-    app.use(cors());
     app.use(helmet());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
