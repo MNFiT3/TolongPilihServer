@@ -10,25 +10,26 @@ if (process.env.NODE_ENV.trim() == 'production') {
    dir = 'build';
    extension = '.js';
 
-   ormconfig["type"] = "mysql";
+   ormconfig["type"] = "postgres";
    ormconfig["host"] = process.env.DB_HOST;
    ormconfig["port"] = process.env.DB_PORT;
    ormconfig["username"] = process.env.DB_USERNAME;
    ormconfig["password"] = process.env.DB_PASSWORD;
    ormconfig["database"] = process.env.DB_NAME;
-   //ormconfig["extra"] = { ssl: true };
+   ormconfig["extra"] = { ssl: true };
 
 }else{
    //Sqlite
    // ormconfig["database"] = "database.sqlite";
    // ormconfig["type"] = "sqlite";
 
-   ormconfig["type"] = "mysql";
+   ormconfig["type"] = "postgres";
    ormconfig["host"] = process.env.DB_HOST;
    ormconfig["port"] = process.env.DB_PORT;
    ormconfig["username"] = process.env.DB_USERNAME;
    ormconfig["password"] = process.env.DB_PASSWORD;
    ormconfig["database"] = process.env.DB_NAME;
+   ormconfig["extra"] = { ssl: true };
 }
 
 ormconfig["entities"] = [
