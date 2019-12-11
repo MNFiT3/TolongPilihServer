@@ -10,6 +10,7 @@ router.post("/group/create", [checkJwt], TolongPilih.createGroup)
 router.post("/group/join", [checkJwt], TolongPilih.joinGroup)
 router.post("/group/leave", [checkJwt], TolongPilih.leaveGroup)
 router.post("/group/invite", [checkJwt], TolongPilih.inviteGroup)
+router.post("/group/list", [checkJwt], TolongPilih.groupList)
 
 router.post("/group/item/add", [checkJwt], TolongPilih.addItems)
 router.post("/group/item/remove", [checkJwt], TolongPilih.removeItems)

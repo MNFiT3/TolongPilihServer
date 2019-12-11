@@ -46,7 +46,7 @@ class UserController {
     //Validade if the parameters are ok
     const errors = await validate(user);
     if (errors.length > 0) {
-      res.status(400).send(errors);
+      res.status(400).send(errors.toString());
       return;
     }
 

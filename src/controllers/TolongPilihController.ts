@@ -374,4 +374,25 @@ export default class TolongPilihController {
             res.json(tolongPilih)
         })
     }
+
+    static groupList = async (req: Request, res: Response) => {
+        const userId = res.locals.jwtPayload.userId
+
+        var groupList: UserGroup[]
+        try {
+            groupList = await getRepository(UserGroup).find({ where: { user: { id: userId }}, relations: ['group']})
+        } catch (error) {
+            res.status(409).send("Group not found")            
+        }
+
+        groupList.forEach( e => {
+            delete e.json
+            delete e.group.createdAt
+            delete e.group.list
+            delete e.group.history
+            delete e.group.json
+        })
+        
+        res.json(groupList)
+    }
 }
